@@ -26,7 +26,7 @@ public class Main {
         }
         System.out.println("bingo!");
 */
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             if (myNum > userNum) {
                 System.out.println("i = " + i);
                 System.out.println("try bigger");
@@ -41,7 +41,6 @@ public class Main {
                 System.out.println("i = " + i);
                 System.out.println("bingo!");
                 return;
-
             }
 
         }
