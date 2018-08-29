@@ -31,5 +31,6 @@ public class Main {
 
         }
         System.out.println("You loose!");
+        System.out.println("The number is " + myNum);
     }
 }
