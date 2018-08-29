@@ -11,39 +11,25 @@ public class Main {
     public static void main(String[] args) {
         int myNum = rand.nextInt(100) + 1;
         System.out.println(myNum);
-        System.out.println("Guess the number from 1 to 100:");
+        System.out.println("Guess the number from 1 to 100!");
+        System.out.println("===============================");
 
-        int userNum = scan.nextInt();
-/*
-        while (myNum != userNum) {
-            if (myNum > userNum) {
-                System.out.println("try bigger");
-            } else {
-                System.out.println("try smaller");
-            }
-            System.out.println("next try:");
-            userNum = scan.nextInt();
-        }
-        System.out.println("bingo!");
-*/
         for (int i = 0; i < 3; i++) {
+            System.out.println("You have " + (3-i) + " tries left. GO:");
+            int userNum = scan.nextInt();
             if (myNum > userNum) {
-                System.out.println("i = " + i);
-                System.out.println("try bigger");
-                System.out.println("you have " + (2-i) + " tries left. Next try:");
-                userNum = scan.nextInt();
+                System.out.println("The number is greater.");
+                System.out.println("-------------------------------");
             } else if (myNum < userNum){
-                System.out.println("i = " + i);
-                System.out.println("try smaller");
-                System.out.println("you have " + (2-i) + " tries left. Next try:");
-                userNum = scan.nextInt();
+                System.out.println("The number is smaller.");
+                System.out.println("-------------------------------");
             } else {
-                System.out.println("i = " + i);
-                System.out.println("bingo!");
+                System.out.println("+++++++++++++++++++++++++++++++");
+                System.out.println("BINGO!");
                 return;
             }
 
         }
-        System.out.println("looser");
+        System.out.println("You loose!");
     }
 }
