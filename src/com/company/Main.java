@@ -3,6 +3,9 @@ package com.company;
 import jdk.dynalink.beans.StaticClass;
 
 import javax.swing.text.DefaultEditorKit;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLOutput;
 import java.util.*;
 
@@ -12,6 +15,9 @@ public class Main {
     static List<GameResult> results = new ArrayList<>();
 
     public static void main(String[] args) {
+
+
+
         String playAgain;
         String userName;
         long time1;
@@ -49,10 +55,10 @@ public class Main {
                     GameResult r = new GameResult();
                     r.name = userName;
                     r.triesCount = i + 1; // herotenj!!!
-                    results.add(r);
                     time2 = System.currentTimeMillis();
-                    long timeSpent = (time2 - time1)/1000;
-                    System.out.println("Time spent in seconds: " + timeSpent);
+                    r.timeSpent = (time2 - time1);
+                    results.add(r);
+                    System.out.println("Time spent in seconds: " + r.timeSpent / 1000);
                     break;
                 }
 
@@ -62,11 +68,12 @@ public class Main {
                 System.out.println("The number is " + myNum);
                 GameResult r = new GameResult();
                 r.name = userName;
-                r.triesCount = 9999; // herotenj!!!
-                results.add(r);
+                r.triesCount = 0; // herotenj!!!
                 time2 = System.currentTimeMillis();
-                long timeSpent = (time2 - time1)/1000;
-                System.out.println("Time spent in seconds: " + timeSpent);
+                r.timeSpent = (time2 - time1);
+                results.add(r);
+
+                System.out.println("Time spent in seconds: " + r.timeSpent / 1000);
             }
 
             System.out.println("");
@@ -74,15 +81,13 @@ public class Main {
             System.out.println("Do you want to play again? y/n");
             playAgain = askYN();
         } while (playAgain.equalsIgnoreCase("y"));
+
+        loadResults();
         showResults();
+        saveResults();
         System.out.println("BYE");
     }
 
-    private static void showResults() {
-        for (GameResult r : results) {
-            System.out.println(r.name + " => " + r.triesCount);
-        }
-    }
 
     static String askYN() {
         String answer;
@@ -115,5 +120,81 @@ public class Main {
                 continue;
             }
         } while (true);
+    }
+
+    private static void saveResults() {
+        File file = new File("top_scores.txt");
+        try(PrintWriter out = new PrintWriter(file)) {
+            for (GameResult r : results) {
+                out.printf("%s %d %d\r\n", r.name, r.triesCount, r.timeSpent);
+            }
+        } catch (IOException e) {
+            System.out.println("Cannot save to file");
+        }
+
+    }
+
+    private static void loadResults() {
+        File file = new File("top_scores.txt");
+        try (Scanner in = new Scanner(file)) {
+
+            while (in.hasNext()) {
+                GameResult result = new GameResult();
+                result.name = in.next();
+                result.triesCount = in.nextInt();
+                result.timeSpent = in.nextLong();
+                results.add(result);
+            }
+
+        } catch ( IOException e) {
+            System.out.println("Cannot load file");
+        }
+    }
+
+    private static void showResults() {
+        results.stream()
+                .sorted(Comparator.<GameResult>comparingInt(r -> r.triesCount)
+                                          .thenComparingLong(r -> r.timeSpent))
+                .limit(5)
+                .forEach(r -> {
+            System.out.printf("Name: %s Tries: %d Time: %dsec\n", r.name, r.triesCount, r.timeSpent / 1000);
+        });
+
+    }
+
+    private static void showResults3() {
+        System.out.println("Last games:");
+        int count = Math.min(5, results.size());
+        for (int i = 0; i < count; i++) {
+            GameResult r = results.get(i);
+            System.out.printf("Name: %s Tries: %d Time: %dsec\n", r.name, r.triesCount, r.timeSpent / 1000);
+        }
+
+    }
+
+    private static void showResults2() {
+        System.out.println("Last games:");
+        int count = 5;
+        if (results.size() < 5) {
+            count = results.size();
+        }
+        for (int i = 0; i < count; i++) {
+            GameResult r = results.get(i);
+            System.out.printf("Name: %s Tries: %d Time: %dsec\n", r.name, r.triesCount, r.timeSpent / 1000);
+
+            //System.out.printf("Name: %s Tries: %d Time: %dsec\n", results.get(i).name, results.get(i).triesCount, results.get(i).timeSpent / 1000);
+        }
+
+    }
+
+    private static void showResults1() {
+        int counter = 0;
+        for (GameResult r : results) {
+            System.out.printf("Name: %s Tries: %d Time: %dsec\n", r.name, r.triesCount, r.timeSpent / 1000);
+            counter++;
+            if (counter == 5) {
+                break;
+            }
+        }
     }
 }
