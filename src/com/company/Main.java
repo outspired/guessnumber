@@ -13,6 +13,7 @@ public class Main {
     static Random rand = new Random();
     static Scanner scan = new Scanner(System.in);
     static List<GameResult> results = new ArrayList<>();
+    static List<GameResult> resultsTemp = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -23,7 +24,10 @@ public class Main {
         long time1;
         long time2;
 
-        do {
+        //do {
+        System.out.println("Do you want to play? y/n:");
+        playAgain = askYN();
+        while (playAgain.equalsIgnoreCase("y")) {
             do {
                 System.out.println("Please enter your name:");
                 userName = scan.next();
@@ -66,21 +70,22 @@ public class Main {
             if (looser) {
                 System.out.println("You loose!");
                 System.out.println("The number is " + myNum);
-                GameResult r = new GameResult();
-                r.name = userName;
-                r.triesCount = 0; // herotenj!!!
+                //GameResult r = new GameResult();
+                //r.name = userName;
+                //r.triesCount = 0; // herotenj!!!
                 time2 = System.currentTimeMillis();
-                r.timeSpent = (time2 - time1);
-                results.add(r);
+                //r.timeSpent = (time2 - time1);
+                //results.add(r);
 
-                System.out.println("Time spent in seconds: " + r.timeSpent / 1000);
+                System.out.println("Time spent in seconds: " + (time2 - time1) / 1000);
             }
 
             System.out.println("");
             System.out.println("///////////////////////////////");
             System.out.println("Do you want to play again? y/n");
             playAgain = askYN();
-        } while (playAgain.equalsIgnoreCase("y"));
+        }
+        //} while (playAgain.equalsIgnoreCase("y"));
 
         loadResults();
         showResults();
@@ -151,7 +156,122 @@ public class Main {
         }
     }
 
+
     private static void showResults() {
+        results.stream()
+        .sorted(Comparator.<GameResult>comparingInt(r -> r.triesCount)
+        .thenComparingLong(r -> r.timeSpent))
+        .limit(5)
+        .forEach(r -> {
+            resultsTemp.add(r);
+        });
+
+        String headerName = "User name";
+        String headerTriesCount = "Number of tries";
+        String headerTimeSpent = "Time";
+
+        int maxName = headerName.length();
+        int maxTriesCount = headerTriesCount.length();
+        int maxTimeSpent = headerTimeSpent.length();
+
+        for (GameResult r : resultsTemp) {
+            if (maxName < r.name.length()) {
+                maxName = r.name.length();
+            }
+            if (maxTriesCount < String.valueOf(r.triesCount).length()) {
+                maxTriesCount = String.valueOf(r.triesCount).length();
+            }
+            if (maxTimeSpent < String.valueOf(r.timeSpent / 1000).length()) {
+                maxTimeSpent = String.valueOf(r.timeSpent / 1000).length();
+            }
+        }
+
+        int headerNameLength = headerName.length();
+        for (int i = 0; i < maxName - headerNameLength; i++) {
+            headerName = headerName + " ";
+        }
+        int headerTriesCountLength = headerTriesCount.length();
+        for (int i = 0; i < maxTriesCount - headerTriesCountLength; i++) {
+            headerTriesCount = headerTriesCount + " ";
+        }
+        int headerTimeSpentLength = headerTimeSpent.length();
+        for (int i = 0; i < maxTimeSpent - headerTimeSpentLength; i++) {
+            headerTimeSpent = headerTimeSpent + " ";
+        }
+
+        int nameAddSpaceNum;
+        int triesCountAddSpaceNum;
+        int timeSpentAddSpaceNum;
+
+        String nameAddedSpaces;
+        String triesCountAddedSpaces;
+        String timeSpentAddedSpaces;
+
+        //String tableLineHorizontal = "|";
+        //for (int i=0; i < 8 + maxName + maxTriesCount + maxTimeSpent; i++) {
+        //  tableLineHorizontal = tableLineHorizontal + "-";
+        //}
+        //tableLineHorizontal = tableLineHorizontal + "|";
+
+        String tableLineHorizontal = "|";
+        for (int i=0; i < 2 + maxName; i++) {tableLineHorizontal = tableLineHorizontal + "-";}
+        tableLineHorizontal = tableLineHorizontal + "+";
+        for (int i=0; i < 2 + maxTriesCount; i++) {tableLineHorizontal = tableLineHorizontal + "-";}
+        tableLineHorizontal = tableLineHorizontal + "+";
+        for (int i=0; i < 2 + maxTimeSpent; i++) {tableLineHorizontal = tableLineHorizontal + "-";}
+        tableLineHorizontal = tableLineHorizontal + "|";
+
+        System.out.println(tableLineHorizontal);
+        System.out.println("| " + headerName + " | " + headerTriesCount + " | " + headerTimeSpent + " |");
+        System.out.println(tableLineHorizontal);
+
+
+        for (GameResult r : resultsTemp) {
+            nameAddSpaceNum = maxName - r.name.length();
+            triesCountAddSpaceNum = maxTriesCount - String.valueOf(r.triesCount).length();
+            timeSpentAddSpaceNum = maxTimeSpent - String.valueOf(r.timeSpent / 1000).length();
+
+            nameAddedSpaces = r.name;
+            for (int i=0; i < nameAddSpaceNum; i++) {
+                nameAddedSpaces = nameAddedSpaces + " ";
+            }
+
+            triesCountAddedSpaces = String.valueOf(r.triesCount);
+            for (int i=0; i < triesCountAddSpaceNum; i++) {
+                triesCountAddedSpaces = " " + triesCountAddedSpaces;
+            }
+
+            timeSpentAddedSpaces = String.valueOf(r.timeSpent / 1000);
+            for (int i=0; i < timeSpentAddSpaceNum; i++) {
+                timeSpentAddedSpaces = " " + timeSpentAddedSpaces;
+            }
+
+
+            System.out.println("| " + nameAddedSpaces + " | " + triesCountAddedSpaces + " | " + timeSpentAddedSpaces + " |");
+            System.out.println(tableLineHorizontal);
+            //System.out.printf("Name: %s Tries: %d Time: %dsec\n", nameAddedSpaces, triesCountAddedSpaces, timeSpentAddedSpaces);
+        }
+
+
+
+        //results.stream()
+        //.sorted(Comparator.<GameResult>comparingInt(r -> r.triesCount)
+        //.thenComparingLong(r -> r.timeSpent))
+        //.limit(5)
+        //.forEach(r -> {
+        //nameAddSpaceNum = maxName - r.name.length();
+
+
+        //triesCountAddSpaceNum = maxTriesCount - String.valueOf(r.triesCount).length();
+        //timeSpentAddSpaceNum = maxTimeSpent - String.valueOf(r.timeSpent).length();
+
+
+
+        //System.out.printf("Name: %s Tries: %d Time: %dsec\n", r.name, r.triesCount, r.timeSpent);
+        //});
+    }
+
+    private static void showResults4() {
         results.stream()
                 .sorted(Comparator.<GameResult>comparingInt(r -> r.triesCount)
                                           .thenComparingLong(r -> r.timeSpent))
