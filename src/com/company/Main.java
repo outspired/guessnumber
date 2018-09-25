@@ -157,7 +157,45 @@ public class Main {
     }
 
 
+
     private static void showResults() {
+       int maxLen = findMaxNameLen();
+
+        results.stream()
+                .sorted(Comparator.<GameResult>comparingInt(r -> r.triesCount)
+                        .thenComparingLong(r -> r.timeSpent))
+                .limit(5)
+                .forEach(r -> {
+                    System.out.print(r.name);
+                    for (int i = 0; i < maxLen - r.name.length(); i++) {
+                        System.out.print("_");
+                    }
+                    System.out.println(" lalala");
+                });
+    }
+
+
+
+    private static int findMaxNameLen() {
+        return results.stream()
+                .map(r -> r.name)
+                .map(n -> n.length())
+                .max(Comparator.naturalOrder())
+                .get();
+    }
+
+    private static int findMaxNameLen1() {
+        int result = 0;
+        for(GameResult r : results) {
+            if (result < r.name.length()) {
+                result = r.name.length();
+            }
+        }
+        return result;
+    }
+
+
+    private static void showResults5() {
         results.stream()
         .sorted(Comparator.<GameResult>comparingInt(r -> r.triesCount)
         .thenComparingLong(r -> r.timeSpent))
